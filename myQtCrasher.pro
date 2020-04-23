@@ -38,19 +38,26 @@ CONFIG += force_debug_info
 CONFIG += separate_debug_info
 
 # Include directories for Crashpad libraries
-INCLUDEPATH += $$_PRO_FILE_PWD_/Crashpad/Include/crashpad
-INCLUDEPATH += $$_PRO_FILE_PWD_/Crashpad/Include/crashpad/third_party/mini_chromium/mini_chromium
+INCLUDEPATH += $$PWD/Crashpad/Include/crashpad
+INCLUDEPATH += $$PWD/Crashpad/Include/crashpad/third_party/mini_chromium/mini_chromium
 
 # Crashpad rules for MacOS
 macx {
     # Crashpad libraries
-    LIBS += -L$$_PRO_FILE_PWD_/Crashpad/Libraries/MacOS/ -lbase
-    LIBS += -L$$_PRO_FILE_PWD_/Crashpad/Libraries/MacOS/ -lutil
-    LIBS += -L$$_PRO_FILE_PWD_/Crashpad/Libraries/MacOS/ -lclient
-    LIBS += "$$_PRO_FILE_PWD_/Crashpad/Libraries/MacOS/util/mach/*.o"
+    LIBS += -L$$PWD/Crashpad/Libraries/MacOS/ -lbase
+    LIBS += -L$$PWD/Crashpad/Libraries/MacOS/ -lutil
+    LIBS += -L$$PWD/Crashpad/Libraries/MacOS/ -lclient
+    LIBS += "$$PWD/Crashpad/Libraries/MacOS/util/mach/*.o"
 
     # System libraries
     LIBS += -L/usr/lib/ -lbsm
     LIBS += -framework AppKit
     LIBS += -framework Security
+
+    # Copy crashpad_handler to build directory
+    crashpad.commands = mkdir -p $$OUT_PWD/crashpad && cp $$PWD/Crashpad/Bin/MacOS/crashpad_handler $$OUT_PWD/crashpad
+    first.depends = $(first) crashpad
+    export(first.depends)
+    export(copydata.commands)
+    QMAKE_EXTRA_TARGETS += first crashpad
 }

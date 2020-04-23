@@ -26,9 +26,13 @@ int main(int argc, char *argv[])
 bool initializeCrashpad(char *dbName, char *appName, char *appVersion )
 {
     // Ensure that handler is shipped with your application
-    base::FilePath handler("/Users/bobby/Desktop/bugsplat/crashpad/crashpad/out/Default/crashpad_handler");
-    base::FilePath reportsDir("/Users/bobby/Desktop/qt/crashpad/reports"); // Crashpad minidump files will be saved in ./crashpad/reports
-    base::FilePath metricsDir("/Users/bobby/Desktop/qt/crashpad"); // Crashpad metrics metadata will be saved in ./crashpad
+    base::FilePath handler("../../../crashpad/crashpad_handler");
+
+    // Directory where reports will be saved. Important! Must be writable or crashpad_handler will crash.
+    base::FilePath reportsDir("../../../crashpad");
+
+    // Directory where metrics will be saved. Important! Must be writable or crashpad_handler will crash.
+    base::FilePath metricsDir("../../../crashpad");
 
     // Configure url with your BugSplat database
     std::string url;
