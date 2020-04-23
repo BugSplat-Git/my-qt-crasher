@@ -17,3 +17,4 @@ void MainWindow::on_pushButton_clicked()
 {
     *(volatile int *)0 = 0;
 }
+

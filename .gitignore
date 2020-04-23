@@ -71,3 +71,6 @@ Thumbs.db
 *.dll
 *.exe
 
+# Crashpad
+!Crashpad/Libraries/**/*.a
+!Crashpad/Libraries/**/*.o

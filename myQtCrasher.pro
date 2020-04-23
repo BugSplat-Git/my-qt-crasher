@@ -32,3 +32,25 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     myQtCrasher.qrc
+
+# Create a dSYM file for dump_syms
+CONFIG += force_debug_info
+CONFIG += separate_debug_info
+
+# Include directories for Crashpad libraries
+INCLUDEPATH += $$_PRO_FILE_PWD_/Crashpad/Include/crashpad
+INCLUDEPATH += $$_PRO_FILE_PWD_/Crashpad/Include/crashpad/third_party/mini_chromium/mini_chromium
+
+# Crashpad rules for MacOS
+macx {
+    # Crashpad libraries
+    LIBS += -L$$_PRO_FILE_PWD_/Crashpad/Libraries/MacOS/ -lbase
+    LIBS += -L$$_PRO_FILE_PWD_/Crashpad/Libraries/MacOS/ -lutil
+    LIBS += -L$$_PRO_FILE_PWD_/Crashpad/Libraries/MacOS/ -lclient
+    LIBS += "$$_PRO_FILE_PWD_/Crashpad/Libraries/MacOS/util/mach/*.o"
+
+    # System libraries
+    LIBS += -L/usr/lib/ -lbsm
+    LIBS += -framework AppKit
+    LIBS += -framework Security
+}
