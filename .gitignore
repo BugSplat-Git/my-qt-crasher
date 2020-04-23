@@ -74,3 +74,4 @@ Thumbs.db
 # Crashpad
 !Crashpad/Libraries/**/*.a
 !Crashpad/Libraries/**/*.o
+*.out

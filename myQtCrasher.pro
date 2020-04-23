@@ -60,4 +60,7 @@ macx {
     export(first.depends)
     export(copydata.commands)
     QMAKE_EXTRA_TARGETS += first crashpad
+
+    # Run dump_syms and symupload
+    QMAKE_POST_LINK += sh $$PWD/Crashpad/Tools/MacOS/symbols.sh $$PWD $$OUT_PWD fred myQtCrasher 1.0
 }
