@@ -1,6 +1,11 @@
 #include "mainwindow.h"
 
+#if defined(Q_OS_MACOS)
+  #include <mach-o/dyld.h>
+#endif
+
 #include <QApplication>
+#include <vector>
 #include "client/crash_report_database.h"
 #include "client/crashpad_client.h"
 #include "client/settings.h"
@@ -8,6 +13,7 @@
 using namespace crashpad;
 
 bool initializeCrashpad(char *dbName, char *appName, char *appVersion);
+std::string getExecutableDir(void);
 
 int main(int argc, char *argv[])
 {
@@ -25,14 +31,17 @@ int main(int argc, char *argv[])
 
 bool initializeCrashpad(char *dbName, char *appName, char *appVersion )
 {
+    // Get directory where the exe lives so we can pass a full path to handler, reportsDir and metricsDir
+    std::string exeDir = getExecutableDir();
+
     // Ensure that handler is shipped with your application
-    base::FilePath handler("../../../crashpad/crashpad_handler");
+    base::FilePath handler(exeDir + "/../../../crashpad/crashpad_handler");
 
     // Directory where reports will be saved. Important! Must be writable or crashpad_handler will crash.
-    base::FilePath reportsDir("../../../crashpad");
+    base::FilePath reportsDir(exeDir + "/../../../crashpad");
 
     // Directory where metrics will be saved. Important! Must be writable or crashpad_handler will crash.
-    base::FilePath metricsDir("../../../crashpad");
+    base::FilePath metricsDir(exeDir + "/../../../crashpad");
 
     // Configure url with your BugSplat database
     std::string url;
@@ -66,4 +75,26 @@ bool initializeCrashpad(char *dbName, char *appName, char *appVersion )
     CrashpadClient *client = new CrashpadClient();
     bool status = client->StartHandler(handler, reportsDir, metricsDir, url, annotations, arguments, true, true);
     return status;
+}
+
+std::string getExecutableDir() {
+    unsigned int bufferSize = 512;
+    std::vector<char> buffer(bufferSize + 1);
+
+#if defined(Q_OS_MACOS)
+    if(_NSGetExecutablePath(&buffer[0], &bufferSize))
+    {
+        buffer.resize(bufferSize);
+        _NSGetExecutablePath(&buffer[0], &bufferSize);
+    }
+
+    char* lastForwardSlash = strrchr(&buffer[0], '/');
+    if (lastForwardSlash == NULL) return NULL;
+    *lastForwardSlash = 0;
+
+#else
+    #error Cannot yet find the executable on this platform
+#endif
+
+    return &buffer[0];
 }
