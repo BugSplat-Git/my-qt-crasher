@@ -6,4 +6,4 @@ sym="${4}.sym"
 url="https://${3}.bugsplat.com/post/bp/symbol/breakpadsymbols.php?appName=${4}&appVer=${5}"
 
 eval "${dump_syms} -g ${dSYM} ${app} > ${sym}"
-eval $"${symupload} \"${sym}\" \"${url}\" > ${symupload}.out"
+eval $"${symupload} \"${sym}\" \"${url}\""
