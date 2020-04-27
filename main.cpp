@@ -10,10 +10,12 @@
 #include "client/crashpad_client.h"
 #include "client/settings.h"
 
+using namespace base;
 using namespace crashpad;
+using namespace std;
 
 bool initializeCrashpad(char *dbName, char *appName, char *appVersion);
-std::string getExecutableDir(void);
+string getExecutableDir(void);
 
 int main(int argc, char *argv[])
 {
@@ -32,25 +34,25 @@ int main(int argc, char *argv[])
 bool initializeCrashpad(char *dbName, char *appName, char *appVersion )
 {
     // Get directory where the exe lives so we can pass a full path to handler, reportsDir and metricsDir
-    std::string exeDir = getExecutableDir();
+    string exeDir = getExecutableDir();
 
     // Ensure that handler is shipped with your application
-    base::FilePath handler(exeDir + "/../../../crashpad/crashpad_handler");
+    FilePath handler(exeDir + "/../../../crashpad/crashpad_handler");
 
     // Directory where reports will be saved. Important! Must be writable or crashpad_handler will crash.
-    base::FilePath reportsDir(exeDir + "/../../../crashpad");
+    FilePath reportsDir(exeDir + "/../../../crashpad");
 
     // Directory where metrics will be saved. Important! Must be writable or crashpad_handler will crash.
-    base::FilePath metricsDir(exeDir + "/../../../crashpad");
+    FilePath metricsDir(exeDir + "/../../../crashpad");
 
     // Configure url with your BugSplat database
-    std::string url;
+    string url;
     url = "https://";
     url += dbName;
     url += ".bugsplat.com/post/bp/crash/crashpad.php";
 
     // Metadata that will be posted to BugSplat
-    std::map<std::string, std::string> annotations;
+    map<string, string> annotations;
     annotations["format"] = "minidump";                 // Required: Crashpad setting to save crash as a minidump
     annotations["product"].assign(appName);             // Required: BugSplat appName
     annotations["version"].assign(appVersion);      	// Required: BugSplat appVersion
@@ -59,11 +61,11 @@ bool initializeCrashpad(char *dbName, char *appName, char *appVersion )
     annotations["list_annotations"] = "Sample comment";	// Optional: BugSplat crash description
 
     // Disable crashpad rate limiting so that all crashes have dmp files
-    std::vector<std::string> arguments;
+    vector<string> arguments;
     arguments.push_back("--no-rate-limit");
 
     // Initialize crashpad database
-    std::unique_ptr<CrashReportDatabase> database = crashpad::CrashReportDatabase::Initialize(reportsDir);
+    unique_ptr<CrashReportDatabase> database = CrashReportDatabase::Initialize(reportsDir);
     if (database == NULL) return false;
 
     // Enable automated crash uploads
@@ -77,9 +79,9 @@ bool initializeCrashpad(char *dbName, char *appName, char *appVersion )
     return status;
 }
 
-std::string getExecutableDir() {
+string getExecutableDir() {
     unsigned int bufferSize = 512;
-    std::vector<char> buffer(bufferSize + 1);
+    vector<char> buffer(bufferSize + 1);
 
 #if defined(Q_OS_MACOS)
     if(_NSGetExecutablePath(&buffer[0], &bufferSize))
