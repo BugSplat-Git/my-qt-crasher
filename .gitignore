@@ -72,6 +72,4 @@ Thumbs.db
 *.exe
 
 # Crashpad
-!Crashpad/Libraries/**/*.a
-!Crashpad/Libraries/**/*.o
-*.out
+!Crashpad/**/*
