@@ -37,6 +37,8 @@ RESOURCES += \
 CONFIG += force_debug_info
 CONFIG += separate_debug_info
 
+CONFIG += STATIC
+
 # Include directories for Crashpad libraries
 INCLUDEPATH += $$PWD/Crashpad/Include/crashpad
 INCLUDEPATH += $$PWD/Crashpad/Include/crashpad/third_party/mini_chromium/mini_chromium
@@ -63,4 +65,11 @@ macx {
 
     # Run dump_syms and symupload
     QMAKE_POST_LINK += bash $$PWD/Crashpad/Tools/MacOS/symbols.sh $$PWD $$OUT_PWD fred myQtCrasher 1.0 > $$PWD/Crashpad/Tools/MacOS/symbols.out 2>&1
+}
+
+# Crashpad rules for Windows
+win32 {
+    LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lbase
+    LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lclient
+    LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lutil
 }
