@@ -72,4 +72,5 @@ win32 {
     LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lbase
     LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lclient
     LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lutil
+    LIBS += -lAdvapi32
 }
