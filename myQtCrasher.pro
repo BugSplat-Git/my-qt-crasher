@@ -39,8 +39,6 @@ RESOURCES += \
 CONFIG += force_debug_info
 CONFIG += separate_debug_info
 
-CONFIG += STATIC
-
 # Include directories for Crashpad libraries
 INCLUDEPATH += $$PWD/Crashpad/Include/crashpad
 INCLUDEPATH += $$PWD/Crashpad/Include/crashpad/third_party/mini_chromium/mini_chromium
