@@ -73,3 +73,5 @@ Thumbs.db
 
 # Crashpad
 !Crashpad/**/*
+**/*.out
+**/settings.dat

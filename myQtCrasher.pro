@@ -17,10 +17,12 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    paths.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    paths.h
 
 FORMS += \
     mainwindow.ui
@@ -69,8 +71,23 @@ macx {
 
 # Crashpad rules for Windows
 win32 {
+    # Build variables
+    CONFIG(debug, debug|release) {
+        EXEDIR = $$OUT_PWD\debug
+    }
+    CONFIG(release, debug|release) {
+        EXEDIR = $$OUT_PWD\release
+    }
+
+    # Crashpad libraries
     LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lbase
     LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lclient
     LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lutil
+
+    # System libraries
     LIBS += -lAdvapi32
+
+    # Copy crashpad
+    QMAKE_POST_LINK += "copy /y $$shell_path($$PWD)\Crashpad\Bin\Windows\crashpad_handler.exe $$shell_path($$OUT_PWD)\crashpad"
+    QMAKE_POST_LINK += "&& $$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.bat $$shell_path($$PWD) $$shell_path($$EXEDIR) fred myQtCrasher 1.0"
 }
