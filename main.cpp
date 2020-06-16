@@ -6,13 +6,13 @@
 
 #include <QApplication>
 #include <vector>
+#include "paths.h"
 #include "client/crash_report_database.h"
 #include "client/crashpad_client.h"
 #include "client/settings.h"
 
 using namespace base;
 using namespace crashpad;
-using namespace std;
 
 bool initializeCrashpad(QString dbName, QString appName, QString appVersion);
 QString getExecutableDir(void);
@@ -36,17 +36,17 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
     // Get directory where the exe lives so we can pass a full path to handler, reportsDir and metricsDir
     QString exeDir = getExecutableDir();
 
-    // Ensure that handler is shipped with your application
-    QString handlerPath = exeDir + "/../../../crashpad/crashpad_handler";
-    FilePath handler(handlerPath.toStdWString()); // TODO BG fix for mac
+    // Helper class for cross-platform file systems
+    Paths crashpadPaths(exeDir);
+
+    // Ensure that crashpad_handler is shipped with your application
+    FilePath handler(Paths::getPlatformString(crashpadPaths.getHandlerPath()));
 
     // Directory where reports will be saved. Important! Must be writable or crashpad_handler will crash.
-    QString reportsPath = exeDir + "/../../../crashpad";
-    FilePath reportsDir(reportsPath.toStdWString()); // TODO BG fix for mac
+    FilePath reportsDir(Paths::getPlatformString(crashpadPaths.getReportsPath()));
 
     // Directory where metrics will be saved. Important! Must be writable or crashpad_handler will crash.
-    QString metricsPath = exeDir + "/../../../crashpad";
-    FilePath metricsDir(metricsPath.toStdWString());
+    FilePath metricsDir(Paths::getPlatformString(crashpadPaths.getMetricsPath()));
 
     // Configure url with your BugSplat database
     QString url = "https://" + dbName + ".bugsplat.com/post/bp/crash/crashpad.php";
@@ -108,6 +108,6 @@ QString getExecutableDir() {
 
     return QString::fromWCharArray(path);
 #else
-    #error Cannot yet find the executable on this platform
+    #error getExecutableDir not implemented on this platform
 #endif
 }
