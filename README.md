@@ -2,7 +2,7 @@
 
 # myQtCrasher
 
-This sample demonstrates cross-platform crash reporting with BugSplat, Crashpad and Qt. This sample comes with prebuilt versions of Crashpad for Windows and MacOS. Additionally, this sample demonstrates how to use the Breakpad tools dump_syms and sym_upload to create and upload .sym files automatically as part of your Qt build.
+This sample demonstrates cross-platform crash reporting with BugSplat, Crashpad and Qt. MyQtCrasher includes prebuilt versions of Crashpad for Windows and MacOS. Additionally, this sample demonstrates how to use the Breakpad tools dump_syms and sym_upload to create and upload .sym files automatically as part of your Qt build.
 
 ## Steps
 1. Download and install [Qt Creator](https://www.qt.io/download)
