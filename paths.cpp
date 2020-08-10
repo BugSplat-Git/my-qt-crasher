@@ -6,9 +6,9 @@ Paths::Paths(QString exeDir) {
 
 QString Paths::getAttachmentPath() {
     #if defined(Q_OS_MACOS)
-        return m_exeDir + "/attachment.txt";
+        return m_exeDir + "../attachment.txt";
     #elif defined(Q_OS_WINDOWS)
-        return m_exeDir + "\\attachment.txt";
+        return m_exeDir + "\\..\\attachment.txt";
     #else
         #error getAttachmentPath() not implemented on this platform
     #endif
