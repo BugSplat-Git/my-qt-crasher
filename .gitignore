@@ -76,5 +76,5 @@ Thumbs.db
 **/*.out
 **/settings.dat
 
-#MacOS
+# MacOS
 .DS_Store
