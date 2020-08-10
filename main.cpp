@@ -74,9 +74,17 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
     if (settings == NULL) return false;
     settings->SetUploadsEnabled(true);
 
+    // Attachments to be uploaded alongside the crash - default bundle size limit is 2MB
+    vector<FilePath> attachments;
+    FilePath attachment(Paths::getPlatformString(crashpadPaths.getAttachmentPath()));
+#if defined(Q_OS_WINDOWS)
+    // Crashpad hasn't implemented attachments on OS X yet
+    attachments.push_back(attachment);
+#endif
+
     // Start crash handler
     CrashpadClient *client = new CrashpadClient();
-    bool status = client->StartHandler(handler, reportsDir, metricsDir, url.toStdString(), annotations.toStdMap(), arguments, true, true);
+    bool status = client->StartHandler(handler, reportsDir, metricsDir, url.toStdString(), annotations.toStdMap(), arguments, true, true, attachments);
     return status;
 }
 

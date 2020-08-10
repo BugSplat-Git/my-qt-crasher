@@ -10,6 +10,7 @@ class Paths
 
     public:
         Paths(QString exeDir);
+        QString getAttachmentPath();
         QString getHandlerPath();
         QString getReportsPath();
         QString getMetricsPath();
