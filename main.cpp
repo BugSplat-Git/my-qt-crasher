@@ -76,7 +76,11 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
 
     // Attachments to be uploaded alongside the crash - default bundle size limit is 2MB
     vector<FilePath> attachments;
-    attachments.push_back(FilePath(L"./attachment.txt"));
+    FilePath attachment(Paths::getPlatformString(crashpadPaths.getAttachmentPath()));
+#if defined(Q_OS_WINDOWS)
+    // Crashpad hasn't implemented attachments on OS X yet
+    attachments.push_back(attachment);
+#endif
 
     // Start crash handler
     CrashpadClient *client = new CrashpadClient();

@@ -75,3 +75,6 @@ Thumbs.db
 !Crashpad/**/*
 **/*.out
 **/settings.dat
+
+#MacOS
+.DS_Store
