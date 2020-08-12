@@ -14,7 +14,7 @@ class Paths
         QString getHandlerPath();
         QString getReportsPath();
         QString getMetricsPath();
-        #if defined(Q_OS_MACOS)
+        #if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
             static string getPlatformString(QString string);
         #elif defined(Q_OS_WINDOWS)
             static wstring getPlatformString(QString string);

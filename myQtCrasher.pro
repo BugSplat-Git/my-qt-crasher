@@ -56,15 +56,10 @@ macx {
     LIBS += -framework AppKit
     LIBS += -framework Security
 
-    # Copy crashpad_handler to build directory
-    crashpad.commands = mkdir -p $$OUT_PWD/crashpad && cp $$PWD/Crashpad/Bin/MacOS/crashpad_handler $$OUT_PWD/crashpad
-    first.depends = $(first) crashpad
-    export(first.depends)
-    export(copydata.commands)
-    QMAKE_EXTRA_TARGETS += first crashpad
-
-    # Run dump_syms and symupload
-    QMAKE_POST_LINK += bash $$PWD/Crashpad/Tools/MacOS/symbols.sh $$PWD $$OUT_PWD fred myQtCrasher 1.0 > $$PWD/Crashpad/Tools/MacOS/symbols.out 2>&1
+    # Copy crashpad_handler to build directory and run dump_syms and symupload
+    QMAKE_POST_LINK += "mkdir -p $$OUT_PWD/crashpad"
+    QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/Bin/MacOS/crashpad_handler $$OUT_PWD/crashpad"
+    QMAKE_POST_LINK += "&& bash $$PWD/Crashpad/Tools/MacOS/symbols.sh $$PWD $$OUT_PWD fred myQtCrasher 1.0 > $$PWD/Crashpad/Tools/MacOS/symbols.out 2>&1"
 }
 
 # Crashpad rules for Windows
@@ -89,4 +84,17 @@ win32 {
     QMAKE_POST_LINK += "copy /y $$shell_path($$PWD)\Crashpad\Bin\Windows\crashpad_handler.exe $$shell_path($$OUT_PWD)\crashpad"
     QMAKE_POST_LINK += "&& $$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.bat $$shell_path($$PWD) $$shell_path($$EXEDIR) fred myQtCrasher 1.0 > $$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.out 2>&1"
     QMAKE_POST_LINK += "&& copy /y $$shell_path($$PWD)\Crashpad\attachment.txt $$shell_path($$OUT_PWD)\attachment.txt"
+}
+
+# Crashpad rules for Linux
+linux {
+    # Crashpad libraries
+    LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lclient
+    LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lutil
+    LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lbase
+
+    # Copy crashpad_handler to build directory and run dump_syms and symupload
+    QMAKE_POST_LINK += "cp $$PWD/Crashpad/Bin/Linux/crashpad_handler $$OUT_PWD/crashpad"
+    QMAKE_POST_LINK += "&& bash $$PWD/Crashpad/Tools/Linux/symbols.sh $$PWD $$OUT_PWD fred myQtCrasher 1.0 > $$PWD/Crashpad/Tools/Linux/symbols.out 2>&1"
+    QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/attachment.txt $$OUT_PWD/attachment.txt"
 }
