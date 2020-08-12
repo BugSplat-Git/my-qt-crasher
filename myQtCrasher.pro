@@ -96,4 +96,8 @@ linux {
     LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lclient
     LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lutil
     LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lbase
+
+    QMAKE_POST_LINK += "cp $$PWD/Crashpad/Bin/Linux/crashpad_handler $$OUT_PWD/crashpad"
+    QMAKE_POST_LINK += "&& bash $$PWD/Crashpad/Tools/Linux/symbols.sh $$PWD $$OUT_PWD fred myQtCrasher 1.0 > $$PWD/Crashpad/Tools/Linux/symbols.out 2>&1"
+    QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/attachment.txt $$OUT_PWD/attachment.txt"
 }

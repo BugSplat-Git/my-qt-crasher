@@ -22,8 +22,7 @@ QString Paths::getHandlerPath() {
     #elif defined(Q_OS_WINDOWS)
         return m_exeDir + "\\..\\crashpad\\crashpad_handler.exe";
     #elif defined(Q_OS_LINUX)
-        // TODO BG copy handler to build dir
-        return m_exeDir + "/../myQtCrasher/Crashpad/Bin/Linux/crashpad_handler";
+        return m_exeDir + "/crashpad/crashpad_handler";
     #else
         #error getHandlerPath not implemented on this platform
     #endif
