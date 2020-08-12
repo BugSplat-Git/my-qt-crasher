@@ -6,9 +6,11 @@ Paths::Paths(QString exeDir) {
 
 QString Paths::getAttachmentPath() {
     #if defined(Q_OS_MACOS)
-        return m_exeDir + "../attachment.txt";
+        return m_exeDir + "/../attachment.txt";
     #elif defined(Q_OS_WINDOWS)
         return m_exeDir + "\\..\\attachment.txt";
+    #elif defined(Q_OS_LINUX)
+        return m_exeDir + "/attachment.txt";
     #else
         #error getAttachmentPath() not implemented on this platform
     #endif
@@ -19,6 +21,9 @@ QString Paths::getHandlerPath() {
         return m_exeDir + "/../../../crashpad/crashpad_handler";
     #elif defined(Q_OS_WINDOWS)
         return m_exeDir + "\\..\\crashpad\\crashpad_handler.exe";
+    #elif defined(Q_OS_LINUX)
+        // TODO BG copy handler to build dir
+        return m_exeDir + "/../myQtCrasher/Crashpad/Bin/Linux/crashpad_handler";
     #else
         #error getHandlerPath not implemented on this platform
     #endif
@@ -29,6 +34,8 @@ QString Paths::getReportsPath() {
         return m_exeDir + "/../../../crashpad";
     #elif defined(Q_OS_WINDOWS)
         return m_exeDir + "\\..\\crashpad";
+    #elif defined(Q_OS_LINUX)
+        return m_exeDir + "/crashpad";
     #else
         #error getReportsPath not implemented on this platform
     #endif
@@ -39,12 +46,14 @@ QString Paths::getMetricsPath() {
         return m_exeDir + "/../../../crashpad";
     #elif defined(Q_OS_WINDOWS)
         return m_exeDir + "\\..\\crashpad";
+    #elif defined(Q_OS_LINUX)
+        return m_exeDir + "/crashpad";
     #else
         #error getMetricsPath not implemented on this platform
     #endif
 }
 
-#if defined(Q_OS_MACOS)
+#if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
 string Paths::getPlatformString(QString string){
     return string.toStdString();
 }

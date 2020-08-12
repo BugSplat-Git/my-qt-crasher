@@ -90,3 +90,10 @@ win32 {
     QMAKE_POST_LINK += "&& $$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.bat $$shell_path($$PWD) $$shell_path($$EXEDIR) fred myQtCrasher 1.0 > $$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.out 2>&1"
     QMAKE_POST_LINK += "&& copy /y $$shell_path($$PWD)\Crashpad\attachment.txt $$shell_path($$OUT_PWD)\attachment.txt"
 }
+
+# Crashpad rules for Linux
+linux {
+    LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lclient
+    LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lutil
+    LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lbase
+}

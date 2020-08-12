@@ -1,7 +1,12 @@
 #include "mainwindow.h"
 
 #if defined(Q_OS_MACOS)
-  #include <mach-o/dyld.h>
+    #include <mach-o/dyld.h>
+#endif
+
+#if defined(Q_OS_LINUX)
+    #include <unistd.h>
+    #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #endif
 
 #include <QApplication>
@@ -49,7 +54,7 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
     FilePath metricsDir(Paths::getPlatformString(crashpadPaths.getMetricsPath()));
 
     // Configure url with your BugSplat database
-    QString url = "https://" + dbName + ".bugsplat.com/post/bp/crash/crashpad.php";
+    QString url = "http://" + dbName + ".bugsplat.com/post/bp/crash/crashpad.php";
 
     // Metadata that will be posted to BugSplat
     QMap<string, string> annotations;
@@ -77,7 +82,7 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
     // Attachments to be uploaded alongside the crash - default bundle size limit is 2MB
     vector<FilePath> attachments;
     FilePath attachment(Paths::getPlatformString(crashpadPaths.getAttachmentPath()));
-#if defined(Q_OS_WINDOWS)
+#if defined(Q_OS_WINDOWS) || defined(Q_OS_LINUX)
     // Crashpad hasn't implemented attachments on OS X yet
     attachments.push_back(attachment);
 #endif
@@ -115,6 +120,19 @@ QString getExecutableDir() {
     *lastBackslash = 0;
 
     return QString::fromWCharArray(path);
+#elif defined(Q_OS_LINUX)
+    char pBuf[FILENAME_MAX];
+    int len = sizeof(pBuf);
+    int bytes = MIN(readlink("/proc/self/exe", pBuf, len), len - 1);
+    if (bytes >= 0) {
+        pBuf[bytes] = '\0';
+    }
+
+    char* lastForwardSlash = strrchr(&pBuf[0], '/');
+    if (lastForwardSlash == NULL) return NULL;
+    *lastForwardSlash = '\0';
+
+    return QString::fromStdString(pBuf);
 #else
     #error getExecutableDir not implemented on this platform
 #endif
