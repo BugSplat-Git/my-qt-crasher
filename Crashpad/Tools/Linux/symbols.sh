@@ -1,3 +1,4 @@
+#!/bin/bash
 dump_syms="${1}/Crashpad/Tools/Linux/dump_syms"
 symupload="${1}/Crashpad/Tools/Linux/symupload"
 app="${2}/${4}.debug"
