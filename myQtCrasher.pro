@@ -94,7 +94,7 @@ linux {
     LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lbase
 
     # Copy crashpad_handler to build directory and run dump_syms and symupload
-    QMAKE_POST_LINK += "cp $$PWD/Crashpad/Bin/Linux/crashpad_handler $$OUT_PWD/crashpad"
-    QMAKE_POST_LINK += "&& bash $$PWD/Crashpad/Tools/Linux/symbols.sh $$PWD $$OUT_PWD fred myQtCrasher 1.0 > $$PWD/Crashpad/Tools/Linux/symbols.out 2>&1"
+    QMAKE_POST_LINK += "mkdir -p $$OUT_PWD/crashpad && cp $$PWD/Crashpad/Bin/Linux/crashpad_handler $$OUT_PWD/crashpad/crashpad_handler"
+    QMAKE_POST_LINK += "&& $$PWD/Crashpad/Tools/Linux/symbols.sh $$PWD $$OUT_PWD fred myQtCrasher 1.0 > $$PWD/Crashpad/Tools/Linux/symbols.out 2>&1"
     QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/attachment.txt $$OUT_PWD/attachment.txt"
 }
