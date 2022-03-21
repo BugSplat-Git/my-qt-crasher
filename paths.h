@@ -2,7 +2,6 @@
 #define PATHS_H
 
 #include <QApplication>
-using namespace std;
 
 class Paths
 {
@@ -14,12 +13,12 @@ class Paths
         QString getHandlerPath();
         QString getReportsPath();
         QString getMetricsPath();
-        #if defined(Q_OS_MACOS) || defined(Q_OS_LINUX)
-            static string getPlatformString(QString string);
+        #if defined(Q_OS_UNIX)
+            static std::string getPlatformString(QString string);
         #elif defined(Q_OS_WINDOWS)
-            static wstring getPlatformString(QString string);
+            static std::wstring getPlatformString(QString string);
         #else
-            #error getPlatformStrinn not implemented on this platform
+            #error getPlatformString not implemented on this platform
         #endif
 };
 

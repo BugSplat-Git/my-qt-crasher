@@ -9,9 +9,6 @@
 
 #include <algorithm>
 
-#include "base/compiler_specific.h"
-#include "base/macros.h"
-
 namespace base {
 
 template<typename T, typename Traits>
@@ -39,6 +36,9 @@ class ScopedGeneric {
       : data_(rvalue.release(), rvalue.get_traits()) {
   }
 
+  ScopedGeneric(const ScopedGeneric&) = delete;
+  ScopedGeneric& operator=(const ScopedGeneric&) = delete;
+
   ~ScopedGeneric() {
     FreeIfNecessary();
   }
@@ -61,7 +61,7 @@ class ScopedGeneric {
     swap(data_.generic, other.data_.generic);
   }
 
-  element_type release() WARN_UNUSED_RESULT {
+  [[nodiscard]] element_type release() {
     element_type old_generic = data_.generic;
     data_.generic = traits_type::InvalidValue();
     return old_generic;
@@ -95,8 +95,6 @@ class ScopedGeneric {
       const ScopedGeneric<T2, Traits2>& p2) const;
 
   Data data_;
-
-  DISALLOW_COPY_AND_ASSIGN(ScopedGeneric);
 };
 
 template<class T, class Traits>
