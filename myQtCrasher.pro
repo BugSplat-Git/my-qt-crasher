@@ -42,14 +42,20 @@ CONFIG += separate_debug_info
 # Include directories for Crashpad libraries
 INCLUDEPATH += $$PWD/Crashpad/Include/crashpad
 INCLUDEPATH += $$PWD/Crashpad/Include/crashpad/third_party/mini_chromium/mini_chromium
+INCLUDEPATH += $$PWD/Crashpad/Include/crashpad/out/Default/gen
 
 # Crashpad rules for MacOS
 macx {
+    # Choose either x86_64 or arm64
+    #ARCH = x86_64
+    ARCH = arm64
+
     # Crashpad libraries
-    LIBS += -L$$PWD/Crashpad/Libraries/MacOS/ -lbase
-    LIBS += -L$$PWD/Crashpad/Libraries/MacOS/ -lutil
-    LIBS += -L$$PWD/Crashpad/Libraries/MacOS/ -lclient
-    LIBS += "$$PWD/Crashpad/Libraries/MacOS/util/mach/*.o"
+    LIBS += -L$$PWD/Crashpad/Libraries/MacOS/$$ARCH -lcommon
+    LIBS += -L$$PWD/Crashpad/Libraries/MacOS/$$ARCH -lclient
+    LIBS += -L$$PWD/Crashpad/Libraries/MacOS/$$ARCH -lbase
+    LIBS += -L$$PWD/Crashpad/Libraries/MacOS/$$ARCH -lutil
+    LIBS += -L$$PWD/Crashpad/Libraries/MacOS/$$ARCH -lmig_output
 
     # System libraries
     LIBS += -L/usr/lib/ -lbsm
@@ -58,7 +64,7 @@ macx {
 
     # Copy crashpad_handler to build directory and run dump_syms and symupload
     QMAKE_POST_LINK += "mkdir -p $$OUT_PWD/crashpad"
-    QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/Bin/MacOS/crashpad_handler $$OUT_PWD/crashpad"
+    QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/Bin/MacOS/$$ARCH/crashpad_handler $$OUT_PWD/crashpad"
     QMAKE_POST_LINK += "&& bash $$PWD/Crashpad/Tools/MacOS/symbols.sh $$PWD $$OUT_PWD fred myQtCrasher 1.0 > $$PWD/Crashpad/Tools/MacOS/symbols.out 2>&1"
 }
 
@@ -74,6 +80,7 @@ win32 {
 
     # Crashpad libraries
     LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lbase
+    LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lcommon
     LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lclient
     LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lutil
 

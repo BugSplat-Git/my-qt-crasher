@@ -5,12 +5,11 @@
 #ifndef MINI_CHROMIUM_BASE_THREADING_THREAD_LOCAL_STORAGE_H_
 #define MINI_CHROMIUM_BASE_THREADING_THREAD_LOCAL_STORAGE_H_
 
-#include "base/macros.h"
 #include "build/build_config.h"
 
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
 #include <windows.h>
-#elif defined(OS_POSIX)
+#elif BUILDFLAG(IS_POSIX)
 #include <pthread.h>
 #endif
 
@@ -23,11 +22,10 @@ namespace internal {
 // interface, you should instead be using ThreadLocalStorage::StaticSlot/Slot.
 class PlatformThreadLocalStorage {
  public:
-
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   typedef unsigned long TLSKey;
   enum { TLS_KEY_OUT_OF_INDEXES = TLS_OUT_OF_INDEXES };
-#elif defined(OS_POSIX)
+#elif BUILDFLAG(IS_POSIX)
   typedef pthread_key_t TLSKey;
   // The following is a "reserved key" which is used in our generic Chromium
   // ThreadLocalStorage implementation.  We expect that an OS will not return
@@ -59,11 +57,11 @@ class PlatformThreadLocalStorage {
   // Destructors may end up being called multiple times on a terminating
   // thread, as other destructors may re-set slots that were previously
   // destroyed.
-#if defined(OS_WIN)
+#if BUILDFLAG(IS_WIN)
   // Since Windows which doesn't support TLS destructor, the implementation
   // should use GetTLSValue() to retrieve the value of TLS slot.
   static void OnThreadExit();
-#elif defined(OS_POSIX)
+#elif BUILDFLAG(IS_POSIX)
   // |Value| is the data stored in TLS slot, The implementation can't use
   // GetTLSValue() to retrieve the value of slot as it has already been reset
   // in Posix.
@@ -77,7 +75,6 @@ class PlatformThreadLocalStorage {
 // an API for portability.
 class ThreadLocalStorage {
  public:
-
   // Prototype for the TLS destructor function, which can be optionally used to
   // cleanup thread local storage on thread exit.  'value' is the data that is
   // stored in thread local storage.
@@ -122,6 +119,9 @@ class ThreadLocalStorage {
     int slot_;
   };
 
+  ThreadLocalStorage(const ThreadLocalStorage&) = delete;
+  ThreadLocalStorage& operator=(const ThreadLocalStorage&) = delete;
+
   // A convenience wrapper around StaticSlot with a constructor. Can be used
   // as a member variable.
   class Slot : public StaticSlot {
@@ -129,15 +129,13 @@ class ThreadLocalStorage {
     // Calls StaticSlot::Initialize().
     explicit Slot(TLSDestructorFunc destructor = NULL);
 
+    Slot(const Slot&) = delete;
+    Slot& operator=(const Slot&) = delete;
+
    private:
     using StaticSlot::initialized_;
     using StaticSlot::slot_;
-
-    DISALLOW_COPY_AND_ASSIGN(Slot);
   };
-
- private:
-  DISALLOW_COPY_AND_ASSIGN(ThreadLocalStorage);
 };
 
 }  // namespace base

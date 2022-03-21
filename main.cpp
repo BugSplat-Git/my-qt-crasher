@@ -1,6 +1,11 @@
 #include "mainwindow.h"
 
-#if defined(Q_OS_MACOS)
+#if defined(Q_OS_WIN)
+    #define NOMINMAX
+    #include <windows.h>
+#endif
+
+#if defined(Q_OS_MAC)
     #include <mach-o/dyld.h>
 #endif
 
@@ -57,7 +62,7 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
     QString url = "http://" + dbName + ".bugsplat.com/post/bp/crash/crashpad.php";
 
     // Metadata that will be posted to BugSplat
-    QMap<string, string> annotations;
+    QMap<std::string, std::string> annotations;
     annotations["format"] = "minidump";                 // Required: Crashpad setting to save crash as a minidump
     annotations["database"] = dbName.toStdString();     // Required: BugSplat database
     annotations["product"] = appName.toStdString();     // Required: BugSplat appName
@@ -67,11 +72,11 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
     annotations["list_annotations"] = "Sample comment";	// Optional: BugSplat crash description
 
     // Disable crashpad rate limiting so that all crashes have dmp files
-    vector<string> arguments;
+    std::vector<std::string> arguments;
     arguments.push_back("--no-rate-limit");
 
     // Initialize crashpad database
-    unique_ptr<CrashReportDatabase> database = CrashReportDatabase::Initialize(reportsDir);
+    std::unique_ptr<CrashReportDatabase> database = CrashReportDatabase::Initialize(reportsDir);
     if (database == NULL) return false;
 
     // Enable automated crash uploads
@@ -80,7 +85,7 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
     settings->SetUploadsEnabled(true);
 
     // Attachments to be uploaded alongside the crash - default bundle size limit is 20MB
-    vector<FilePath> attachments;
+    std::vector<FilePath> attachments;
     FilePath attachment(Paths::getPlatformString(crashpadPaths.getAttachmentPath()));
 #if defined(Q_OS_WINDOWS) || defined(Q_OS_LINUX)
     // Crashpad hasn't implemented attachments on OS X yet
@@ -94,9 +99,9 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
 }
 
 QString getExecutableDir() {
-#if defined(Q_OS_MACOS)
+#if defined(Q_OS_MAC)
     unsigned int bufferSize = 512;
-    vector<char> buffer(bufferSize + 1);
+    std::vector<char> buffer(bufferSize + 1);
 
     if(_NSGetExecutablePath(&buffer[0], &bufferSize))
     {

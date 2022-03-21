@@ -17,10 +17,7 @@
 
 #include <time.h>
 
-#include <string>
-
 #include "base/files/file_path.h"
-#include "base/macros.h"
 #include "base/scoped_generic.h"
 #include "build/build_config.h"
 #include "util/file/file_io.h"
@@ -46,6 +43,10 @@ struct ScopedLockedFileHandleTraits {
 class Settings {
  public:
   Settings();
+
+  Settings(const Settings&) = delete;
+  Settings& operator=(const Settings&) = delete;
+
   ~Settings();
 
   //! \brief Initializes the settings data store.
@@ -122,7 +123,7 @@ class Settings {
   // and closes the file on destruction. Note that on Fuchsia, this handle DOES
   // NOT offer correct operation, only an attempt to DCHECK if racy behavior is
   // detected.
-#if defined(OS_FUCHSIA)
+#if BUILDFLAG(IS_FUCHSIA)
   struct ScopedLockedFileHandle {
    public:
     ScopedLockedFileHandle();
@@ -130,6 +131,10 @@ class Settings {
                            const base::FilePath& lockfile_path);
     ScopedLockedFileHandle(ScopedLockedFileHandle&& other);
     ScopedLockedFileHandle& operator=(ScopedLockedFileHandle&& other);
+
+    ScopedLockedFileHandle(const ScopedLockedFileHandle&) = delete;
+    ScopedLockedFileHandle& operator=(const ScopedLockedFileHandle&) = delete;
+
     ~ScopedLockedFileHandle();
 
     // These mirror the non-Fuchsia ScopedLockedFileHandle via ScopedGeneric so
@@ -147,13 +152,11 @@ class Settings {
 
     FileHandle handle_;
     base::FilePath lockfile_path_;
-
-    DISALLOW_COPY_AND_ASSIGN(ScopedLockedFileHandle);
   };
-#else  // OS_FUCHSIA
+#else  // BUILDFLAG(IS_FUCHSIA)
   using ScopedLockedFileHandle =
       base::ScopedGeneric<FileHandle, internal::ScopedLockedFileHandleTraits>;
-#endif  // OS_FUCHSIA
+#endif  // BUILDFLAG(IS_FUCHSIA)
   static ScopedLockedFileHandle MakeScopedLockedFileHandle(
       FileHandle file,
       FileLocking locking,
@@ -221,8 +224,6 @@ class Settings {
   base::FilePath file_path_;
 
   InitializationState initialized_;
-
-  DISALLOW_COPY_AND_ASSIGN(Settings);
 };
 
 }  // namespace crashpad
