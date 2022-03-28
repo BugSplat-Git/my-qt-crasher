@@ -18,4 +18,4 @@ You will need to link with the correct libraries and load the correct version of
 
 ## Other
 
-If you change the database, application and version in `main.cpp`, be sure to update the `QMAKE_POST_LINK` command with these new values. `symbols.sh` is responsible for running `dump_syms` and `symupload` on macOS and Linux. `symbols.bat` is responseible for running `symupload` on Windows. If the values passed to `symbols.sh` or `symbols.bat` via the `QMAKE_POST_LINK` command are wrong then you will not see file names or line numbers in your crash reports.
+If you change the database, application and version in `main.cpp`, be sure to update the `QMAKE_POST_LINK` command with these new values. `symbols.sh` is responsible for running `dump_syms` and `symupload` on macOS and Linux. `symbols.bat` is responsible for running `symupload` on Windows. If the values passed to `symbols.sh` or `symbols.bat` via the `QMAKE_POST_LINK` command are wrong then you will not see file names or line numbers in your crash reports.
