@@ -96,6 +96,7 @@ win32 {
 # Crashpad rules for Linux
 linux {
     # Crashpad libraries
+    LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lcommon
     LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lclient
     LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lutil
     LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lbase
