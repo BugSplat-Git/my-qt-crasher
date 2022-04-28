@@ -72,23 +72,26 @@ macx {
 win32 {
     # Build variables
     CONFIG(debug, debug|release) {
+        LIBDIR = $$PWD/Crashpad/Libraries/Windows/MDd
         EXEDIR = $$OUT_PWD\debug
     }
     CONFIG(release, debug|release) {
+        LIBDIR = $$PWD/Crashpad/Libraries/Windows/MD
         EXEDIR = $$OUT_PWD\release
     }
 
     # Crashpad libraries
-    LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lbase
-    LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lcommon
-    LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lclient
-    LIBS += -L$$PWD/Crashpad/Libraries/Windows/ -lutil
+    LIBS += -L$$LIBDIR -lbase
+    LIBS += -L$$LIBDIR -lcommon
+    LIBS += -L$$LIBDIR -lclient
+    LIBS += -L$$LIBDIR -lutil
 
     # System libraries
     LIBS += -lAdvapi32
 
     # Copy crashpad_handler to output directory and upload symbols
-    QMAKE_POST_LINK += "copy /y $$shell_path($$PWD)\Crashpad\Bin\Windows\crashpad_handler.exe $$shell_path($$OUT_PWD)\crashpad"
+    QMAKE_POST_LINK += "if not exist $$shell_path($$OUT_PWD)\crashpad mkdir $$shell_path($$OUT_PWD)\crashpad"
+    QMAKE_POST_LINK += "&& copy /y $$shell_path($$PWD)\Crashpad\Bin\Windows\crashpad_handler.exe $$shell_path($$OUT_PWD)\crashpad\crashpad_handler.exe"
     QMAKE_POST_LINK += "&& $$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.bat $$shell_path($$PWD) $$shell_path($$EXEDIR) fred myQtCrasher 1.0 > $$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.out 2>&1"
     QMAKE_POST_LINK += "&& copy /y $$shell_path($$PWD)\Crashpad\attachment.txt $$shell_path($$OUT_PWD)\attachment.txt"
 }
