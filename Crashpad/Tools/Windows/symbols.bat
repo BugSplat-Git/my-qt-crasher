@@ -1,1 +1,1 @@
-%1\Crashpad\Tools\Windows\symupload.exe --product %4 "%2\%4.exe" "https://%3.bugsplat.com/post/bp/symbol/breakpadsymbols.php?appName=%4&appVer=%5"
+%~dp0\symupload.exe --product %3 "%1\%3.exe" "https://%2.bugsplat.com/post/bp/symbol/breakpadsymbols.php?appName=%3&appVer=%4"

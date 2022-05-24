@@ -1,0 +1,18 @@
+win-native.txt contains paths for the qt installation and compilers.
+this might not always be necesary but if the meson setup fails (step 1), one of these paths is probably wrong
+
+1: generate build directories
+
+for debug: meson BuildDebug --native-file .\win-native.txt --buildtype debug
+
+for release: meson BuildRelease --native-file .\win-native.txt --buildtype debug
+
+the first argument is just the directory name, can be changed
+
+2: ninja 
+
+ninja -C <build dir>
+
+3: run symupload (still manual for now until we figure out what's happening with it)
+
+cd <builddir> ; ..\Crashpad\Tools\Windows\symbols.bat . fred myQtCrasher 1.0 > ..\Crashpad\Tools\Windows\symbols.out 2>&1

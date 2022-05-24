@@ -1,0 +1,21 @@
+# This is a meson native file
+
+[constants]
+con_qpath = 'C:\Qt\5.13.2\msvc2017_64\bin\'
+
+[properties]
+qpath = con_qpath
+#properties can be fetched with meson.get_external_propery(<key>) unlike constants
+
+[binaries]
+qmake = con_qpath + 'qmake.exe'
+
+cmake = 'C:\Dependencies\vcpkg\downloads\tools\cmake-3.21.1-windows\cmake-3.21.1-windows-i386\bin\cmake.exe'
+
+cpp = 'C:\Program Files\LLVM\bin\clang'
+cpp_ld = 'lld'
+
+
+[cmake]
+CMAKE_TOOLCHAIN_FILE = 'C:/Dependencies/vcpkg/scripts/buildsystems/vcpkg.cmake'
+CMAKE_GENERATOR_PLATFORM = 'x64'
