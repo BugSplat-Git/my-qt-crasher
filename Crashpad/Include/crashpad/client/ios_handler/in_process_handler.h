@@ -1,4 +1,4 @@
-// Copyright 2021 The Crashpad Authors. All rights reserved.
+// Copyright 2021 The Crashpad Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,15 @@
 #include <stdint.h>
 
 #include <atomic>
+#include <functional>
 #include <map>
 #include <string>
 #include <vector>
 
 #include "base/files/file_path.h"
+#include "base/synchronization/lock.h"
 #include "client/ios_handler/prune_intermediate_dumps_and_crash_reports_thread.h"
+#include "client/upload_behavior_ios.h"
 #include "handler/crash_report_upload_thread.h"
 #include "snapshot/ios/process_snapshot_ios_intermediate_dump.h"
 #include "util/ios/ios_intermediate_dump_writer.h"
@@ -41,6 +44,17 @@ class InProcessHandler {
   InProcessHandler(const InProcessHandler&) = delete;
   InProcessHandler& operator=(const InProcessHandler&) = delete;
 
+  //! \brief Observation callback invoked each time this object finishes
+  //!     processing and attempting to upload on-disk crash reports (whether or
+  //!     not the uploads succeeded).
+  //!
+  //! This callback is copied into this object. Any references or pointers
+  //! inside must outlive this object.
+  //!
+  //! The callback might be invoked on a background thread, so clients must
+  //! synchronize appropriately.
+  using ProcessPendingReportsObservationCallback = std::function<void()>;
+
   //! \brief Initializes the in-process handler.
   //!
   //! This method must be called only once, and must be successfully called
@@ -49,11 +63,16 @@ class InProcessHandler {
   //! \param[in] database The path to a Crashpad database.
   //! \param[in] url The URL of an upload server.
   //! \param[in] annotations Process annotations to set in each crash report.
+  //! \param[in] callback Optional callback invoked zero or more times
+  //!     on a background thread each time this object finishes
+  //!     processing and attempting to upload on-disk crash reports.
   //! \return `true` if a handler to a pending intermediate dump could be
   //!     opened.
   bool Initialize(const base::FilePath& database,
                   const std::string& url,
-                  const std::map<std::string, std::string>& annotations);
+                  const std::map<std::string, std::string>& annotations,
+                  ProcessPendingReportsObservationCallback callback =
+                      ProcessPendingReportsObservationCallback());
 
   //! \brief Generate an intermediate dump from a signal handler exception.
   //!      Writes the dump with the cached writer does not allow concurrent
@@ -88,14 +107,6 @@ class InProcessHandler {
                                       ConstThreadState old_state,
                                       mach_msg_type_number_t old_state_count);
 
-  //! \brief Generate an intermediate dump from a NSException caught with its
-  //!     associated CPU context. Because the method for intercepting
-  //!     exceptions is imperfect, uses a new writer for the intermediate dump,
-  //!     as it is possible for further exceptions to happen.
-  //!
-  //! \param[in] context
-  void DumpExceptionFromNSExceptionWithContext(NativeCPUContext* context);
-
   //! \brief Generate an intermediate dump from an uncaught NSException.
   //!
   //! When the ObjcExceptionPreprocessor does not detect an NSException as it is
@@ -117,9 +128,11 @@ class InProcessHandler {
   //!
   //! \param[in] context A pointer to a NativeCPUContext object for this
   //!     simulated exception.
+  //! \param[in] exception
   //! \param[out] path The path of the intermediate dump generated.
   //! \return `true` if the pending intermediate dump could be written.
   bool DumpExceptionFromSimulatedMachException(const NativeCPUContext* context,
+                                               exception_type_t exception,
                                                base::FilePath* path);
 
   //! \brief Generate a simulated intermediate dump similar to a Mach exception
@@ -127,11 +140,20 @@ class InProcessHandler {
   //!
   //! \param[in] context A pointer to a NativeCPUContext object for this
   //!     simulated exception.
+  //! \param[in] exception
   //! \param[in] path Path to where the intermediate dump should be written.
   //! \return `true` if the pending intermediate dump could be written.
   bool DumpExceptionFromSimulatedMachExceptionAtPath(
       const NativeCPUContext* context,
+      exception_type_t exception,
       const base::FilePath& path);
+
+  //! \brief Moves an intermediate dump to the pending directory. This is meant
+  //!     to be used by the UncaughtExceptionHandler, when NSException caught
+  //!     by the preprocessor matches the UncaughtExceptionHandler.
+  //!
+  //! \param[in] path Path to the specific intermediate dump.
+  bool MoveIntermediateDumpAtPathToPending(const base::FilePath& path);
 
   //! \brief Requests that the handler convert all intermediate dumps into
   //!     minidumps and trigger an upload if possible.
@@ -151,7 +173,12 @@ class InProcessHandler {
 
   //! \brief Requests that the handler begin in-process uploading of any
   //!     pending reports.
-  void StartProcessingPendingReports();
+  //!
+  //! \param[in] upload_behavior Controls when the upload thread will run and
+  //!     process pending reports. By default, only uploads pending reports
+  //!     when the application is active.
+  void StartProcessingPendingReports(
+      UploadBehavior upload_behavior = UploadBehavior::kUploadWhenAppIsActive);
 
   //! \brief Inject a callback into Mach handling. Intended to be used by
   //!     tests to trigger a reentrant exception.
@@ -202,6 +229,14 @@ class InProcessHandler {
     IOSIntermediateDumpWriter* writer_;
   };
 
+  //! \brief Manage the prune and upload thread when the active state changes.
+  //!
+  //! \param[in] active `true` if the application is actively running in the
+  //!     foreground, `false` otherwise.
+  //! \param[in] upload_behavior Controls when the upload thread will run and
+  //!     process pending reports.
+  void UpdatePruneAndUploadThreads(bool active, UploadBehavior upload_behavior);
+
   //! \brief Writes a minidump to the Crashpad database from the
   //!     \a process_snapshot, and triggers the upload_thread_ if started.
   void SaveSnapshot(ProcessSnapshotIOSIntermediateDump& process_snapshot);
@@ -230,7 +265,9 @@ class InProcessHandler {
   // in DumpExceptionFromMachException after aquiring the cached_writer_.
   void (*mach_exception_callback_for_testing_)() = nullptr;
 
-  bool upload_thread_started_ = false;
+  // Used to synchronize access to UpdatePruneAndUploadThreads().
+  base::Lock prune_and_upload_lock_;
+  std::atomic_bool upload_thread_enabled_ = false;
   std::map<std::string, std::string> annotations_;
   base::FilePath base_dir_;
   std::string cached_writer_path_;
