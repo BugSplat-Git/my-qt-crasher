@@ -26,9 +26,17 @@ For more information about how to configure Crashpad in your Qt application plea
 5. Log into BugSplat using our public account fred@bugsplat.com and the password Flintstone
 6. Click the link in the ID column on the [Crashes](https://app.bugsplat.com/v2/crashes?database=Fred&c0=appName&f0=EQUAL&v0=myQtCrasher) page to see detailed information similar to what you would see in your debugger
 
+### Windows
+
+When building your Qt project you may encounter `Il mismatch between 'P1' version 'x' and 'P2' version 'y'`. This is due to Qt building with a different toolchain than the Crashpad libraries. To workaround the `Il mismatch` issue, build Crashpad specifying `/GL-` for `extra_cflags`. When Crashpad is built with different minor versions of MSVC specifying `/GL-` usually fixes the problem. However, if the linker complains about unresolved symbols after specifying `/GL-` you will need to ensure you're building with the same major version of MSVC. The pre-built Crashpad libraries included in this sample are built with MSVC 17 (2022).
+
 ### macOS
 
 You will need to link with the correct libraries and load the correct version of `crashpad_handler` at runtime depending on if your build is targeting x86_64 or arm64 (M1) macOS systems. In `myQtCrasher.pro` there is an variable that you can [uncomment](https://github.com/BugSplat-Git/my-qt-crasher/blob/4a6b1e9cb6084963fd457e745e9142db9c05f063/myQtCrasher.pro#L51) that will allow you to build for arm64 macOS systems.
+
+**Attachments**
+
+BugSplat has created a [Crashpad fork](https://github.com/BugSplat-Git/crashpad) that adds support for attachments to macOS. This project uses pre-built binaries from the forked version of Crashpad to demonstrate attachment support on macOS. If attachment support on macOS is a requirement for your project, you can use the pre-built libraries from this repo, or build the Crashpad libraries yourself from the code in our forked repo.
 
 ### Additional Considerations
 
