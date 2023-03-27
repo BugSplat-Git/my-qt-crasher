@@ -59,7 +59,7 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
     FilePath metricsDir(Paths::getPlatformString(crashpadPaths.getMetricsPath()));
 
     // Configure url with your BugSplat database
-    QString url = "http://" + dbName + ".bugsplat.com/post/bp/crash/crashpad.php";
+    QString url = "https://" + dbName + ".bugsplat.com/post/bp/crash/crashpad.php";
 
     // Metadata that will be posted to BugSplat
     QMap<std::string, std::string> annotations;
@@ -87,10 +87,7 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
     // Attachments to be uploaded alongside the crash - default bundle size limit is 20MB
     std::vector<FilePath> attachments;
     FilePath attachment(Paths::getPlatformString(crashpadPaths.getAttachmentPath()));
-#if defined(Q_OS_WINDOWS) || defined(Q_OS_LINUX)
-    // Crashpad hasn't implemented attachments on OS X yet
     attachments.push_back(attachment);
-#endif
 
     // Start crash handler
     CrashpadClient *client = new CrashpadClient();

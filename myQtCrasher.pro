@@ -66,6 +66,7 @@ macx {
     QMAKE_POST_LINK += "mkdir -p $$OUT_PWD/crashpad"
     QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/Bin/MacOS/$$ARCH/crashpad_handler $$OUT_PWD/crashpad"
     QMAKE_POST_LINK += "&& bash $$PWD/Crashpad/Tools/MacOS/symbols.sh $$PWD $$OUT_PWD fred myQtCrasher 1.0 > $$PWD/Crashpad/Tools/MacOS/symbols.out 2>&1"
+    QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/attachment.txt $$OUT_PWD/attachment.txt"
 }
 
 # Crashpad rules for Windows
@@ -81,10 +82,10 @@ win32 {
     }
 
     # Crashpad libraries
-    LIBS += -L$$LIBDIR -lbase
     LIBS += -L$$LIBDIR -lcommon
     LIBS += -L$$LIBDIR -lclient
     LIBS += -L$$LIBDIR -lutil
+    LIBS += -L$$LIBDIR -lbase
 
     # System libraries
     LIBS += -lAdvapi32

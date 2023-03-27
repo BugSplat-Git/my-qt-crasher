@@ -1,4 +1,4 @@
-// Copyright 2020 The Crashpad Authors. All rights reserved.
+// Copyright 2020 The Crashpad Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -73,6 +73,12 @@
 // Trigger a crash with an uncaught NSException.
 - (void)crashNSException;
 
+// Trigger a crash throwing something that isn't an NSException (an NSString).
+- (void)crashNotAnNSException;
+
+// Trigger a crash with an uncaught and unhandled NSException.
+- (void)crashUnhandledNSException;
+
 // Trigger an unrecognized selector after delay.
 - (void)crashUnrecognizedSelectorAfterDelay;
 
@@ -99,6 +105,9 @@
 
 // Triggers a simulataneous Mach exception and signal in different threads.
 - (void)crashConcurrentSignalAndMach;
+
+// Triggers simultaneous caught NSExceptions
+- (void)catchConcurrentNSException;
 
 // Triggers a SIGABRT signal while handling an NSException to test reentrant
 // exceptions.
