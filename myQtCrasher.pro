@@ -82,10 +82,10 @@ win32 {
     }
 
     # Crashpad libraries
-    LIBS += -L$$LIBDIR -lbase
     LIBS += -L$$LIBDIR -lcommon
     LIBS += -L$$LIBDIR -lclient
     LIBS += -L$$LIBDIR -lutil
+    LIBS += -L$$LIBDIR -lbase
 
     # System libraries
     LIBS += -lAdvapi32
