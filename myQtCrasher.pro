@@ -35,6 +35,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     myQtCrasher.qrc
 
+# BugSplat vars
+BUGSPLAT_DATABASE = fred
+BUGSPLAT_APPLICATION = myQtCrasher
+BUGSPLAT_VERSION = 1.1
+BUGSPLAT_USER = fred@bugsplat.com
+BUGSPLAT_PASSWORD = Flintstone
+
 # Create a dSYM file for dump_syms
 CONFIG += force_debug_info
 CONFIG += separate_debug_info
@@ -65,7 +72,7 @@ macx {
     # Copy crashpad_handler to build directory and run dump_syms and symupload
     QMAKE_POST_LINK += "mkdir -p $$OUT_PWD/crashpad"
     QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/Bin/MacOS/$$ARCH/crashpad_handler $$OUT_PWD/crashpad"
-    QMAKE_POST_LINK += "&& bash $$PWD/Crashpad/Tools/MacOS/symbols.sh $$PWD $$OUT_PWD fred myQtCrasher 1.1 fred@bugsplat.com Flintstone > $$PWD/Crashpad/Tools/MacOS/symbols.out 2>&1"
+    QMAKE_POST_LINK += "&& bash $$PWD/Crashpad/Tools/MacOS/symbols.sh $$PWD $$OUT_PWD $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD"
     QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/attachment.txt $$OUT_PWD/attachment.txt"
 }
 
@@ -91,9 +98,9 @@ win32 {
     LIBS += -lAdvapi32
 
     # Copy crashpad_handler to output directory and upload symbols
-    QMAKE_POST_LINK += "if not exist $$shell_path($$OUT_PWD)\crashpad mkdir $$shell_path($$OUT_PWD)\crashpad"
-    QMAKE_POST_LINK += "&& copy /y $$shell_path($$PWD)\Crashpad\Bin\Windows\crashpad_handler.exe $$shell_path($$OUT_PWD)\crashpad\crashpad_handler.exe"
-    QMAKE_POST_LINK += "&& $$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.bat $$shell_path($$PWD) $$shell_path($$EXEDIR) fred myQtCrasher 1.0 > $$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.out 2>&1"
+    QMAKE_POST_LINK += "mkdir $$shell_path($$OUT_PWD)\crashpad"
+    QMAKE_POST_LINK += "& copy /y $$shell_path($$PWD)\Crashpad\Bin\Windows\crashpad_handler.exe $$shell_path($$OUT_PWD)\crashpad\crashpad_handler.exe"
+    QMAKE_POST_LINK += "&& $$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.bat $$shell_path($$PWD) $$shell_path($$EXEDIR) $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD"
     QMAKE_POST_LINK += "&& copy /y $$shell_path($$PWD)\Crashpad\attachment.txt $$shell_path($$OUT_PWD)\attachment.txt"
 }
 
@@ -107,6 +114,6 @@ linux {
 
     # Copy crashpad_handler to build directory and run dump_syms and symupload
     QMAKE_POST_LINK += "mkdir -p $$OUT_PWD/crashpad && cp $$PWD/Crashpad/Bin/Linux/crashpad_handler $$OUT_PWD/crashpad/crashpad_handler"
-    QMAKE_POST_LINK += "&& $$PWD/Crashpad/Tools/Linux/symbols.sh $$PWD $$OUT_PWD fred myQtCrasher 1.0 > $$PWD/Crashpad/Tools/Linux/symbols.out 2>&1"
+    QMAKE_POST_LINK += "&& $$PWD/Crashpad/Tools/Linux/symbols.sh $$PWD $$OUT_PWD $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD"
     QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/attachment.txt $$OUT_PWD/attachment.txt"
 }
