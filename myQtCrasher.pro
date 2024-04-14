@@ -35,7 +35,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     myQtCrasher.qrc
 
-# BugSplat vars
+# BugSplat configuration options
 BUGSPLAT_DATABASE = fred
 BUGSPLAT_APPLICATION = myQtCrasher
 BUGSPLAT_VERSION = 1.1
