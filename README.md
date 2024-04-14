@@ -13,7 +13,7 @@
 
 ## 👋 Introduction
 
-This sample demonstrates cross-platform crash reporting with [BugSplat](https://bugsplat.com), [Crashpad](https://chromium.googlesource.com/crashpad/crashpad/+/master/README.md), and [Qt](https://www.qt.io/). MyQtCrasher includes prebuilt versions of Crashpad for Windows, macOS (x86_64 and arm64), and Linux. Additionally, this sample demonstrates how to use the Breakpad tools `dump_syms` and `symupload` to create and upload `.sym` files as part of your Qt build.
+This sample demonstrates cross-platform crash reporting with [BugSplat](https://bugsplat.com), [Crashpad](https://chromium.googlesource.com/crashpad/crashpad/+/master/README.md), and [Qt](https://www.qt.io/). Additionally, my-qt-crasher uses [symbol-upload](https://github.com/BugSplat-Git/symbol-upload) to generate [symbol files](https://chromium.googlesource.com/breakpad/breakpad/+/master/docs/symbol_files.md) and upload them to BugSplat
 
 For more information about how to configure Crashpad in your Qt application please see the BugSplat [docs](https://docs.bugsplat.com/introduction/getting-started/integrations/cross-platform/qt).
 
@@ -40,8 +40,8 @@ BugSplat has created a [Crashpad fork](https://github.com/BugSplat-Git/crashpad)
 
 ### Additional Considerations
 
-If you change the database, application and version in `main.cpp`, be sure to update the `QMAKE_POST_LINK` command with these new values. `symbols.sh` is responsible for running `dump_syms` and `symupload` on macOS and Linux. `symbols.bat` is responsible for running `symupload` on Windows. If the values passed to `symbols.sh` or `symbols.bat` via the `QMAKE_POST_LINK` command are wrong then you will not see file names or line numbers in your crash reports.
+If you change the BugSplat `database`, `application`, or `version` values in `main.cpp`, be sure to update the corresponding variables in the [myQtCrasher.pro file](https://github.com/BugSplat-Git/my-qt-crasher/blob/fc55bad38929f21a431c965abcfd3a17b1b91e45/myQtCrasher.pro#L38-L43). The `symbols.sh` scripts are responsible for running `symbol-upload` on macOS and Linux. Likewise, `symbols.bat` is responsible for running `symbol-upload` on Windows. If the values passed to `symbols.sh` or `symbols.bat` via the `QMAKE_POST_LINK` command are wrong then you will not see file names or line numbers in your crash reports.
 
 ## 👷 Support
 
-If you have any additional questions, please email our [support](mailto:support@bugsplat.com) team, join us on [Discord](https://discord.gg/K4KjjRV5ve), or reach out via the chat in our web application.
+If you have any additional questions, please email our [support](mailto:support@bugsplat.com) team, join us on [Discord](https://discord.gg/bugsplat), or reach out via the chat in our web application.
