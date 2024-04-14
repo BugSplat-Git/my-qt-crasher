@@ -26,6 +26,12 @@ For more information about how to configure Crashpad in your Qt application plea
 5. Log into BugSplat using our public account fred@bugsplat.com and the password Flintstone
 6. Click the link in the ID column on the [Crashes](https://app.bugsplat.com/v2/crashes?database=Fred&c0=appName&f0=EQUAL&v0=myQtCrasher) page to see detailed information similar to what you would see in your debugger
 
+**Crashes Page**
+<img width="1728" alt="BugSplat Crashes Page" src="https://github.com/BugSplat-Git/my-qt-crasher/assets/2646053/174d9e4e-f55d-4a25-b604-252912cd6c67">
+
+**Crash Page**
+<img width="1728" alt="BugSplat Crash Page" src="https://github.com/BugSplat-Git/my-qt-crasher/assets/2646053/19f4efad-aea7-47fe-b410-1b87922e7329">
+
 ### Windows
 
 When building your Qt project you may encounter `Il mismatch between 'P1' version 'x' and 'P2' version 'y'`. This is due to Qt building with a different toolchain than the Crashpad libraries. To workaround the `Il mismatch` issue, build Crashpad specifying `/GL-` for `extra_cflags`. When Crashpad is built with different minor versions of MSVC specifying `/GL-` usually fixes the problem. However, if the linker complains about unresolved symbols after specifying `/GL-` you will need to ensure you're building with the same major version of MSVC. The pre-built Crashpad libraries included in this sample are built with MSVC 17 (2022).
