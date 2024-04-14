@@ -69,7 +69,7 @@ macx {
     LIBS += -framework AppKit
     LIBS += -framework Security
 
-    # Copy crashpad_handler to build directory and run dump_syms and symupload
+    # Copy crashpad_handler, attachment.txt to build directory, and upload symbols
     QMAKE_POST_LINK += "mkdir -p $$OUT_PWD/crashpad"
     QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/Bin/MacOS/$$ARCH/crashpad_handler $$OUT_PWD/crashpad"
     QMAKE_POST_LINK += "&& bash $$PWD/Crashpad/Tools/MacOS/symbols.sh $$PWD $$OUT_PWD $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD"
@@ -97,7 +97,7 @@ win32 {
     # System libraries
     LIBS += -lAdvapi32
 
-    # Copy crashpad_handler to output directory and upload symbols
+    # Copy crashpad_handler, attachment.txt to build directory, and upload symbols
     QMAKE_POST_LINK += "mkdir $$shell_path($$OUT_PWD)\crashpad"
     QMAKE_POST_LINK += "& copy /y $$shell_path($$PWD)\Crashpad\Bin\Windows\crashpad_handler.exe $$shell_path($$OUT_PWD)\crashpad\crashpad_handler.exe"
     QMAKE_POST_LINK += "&& $$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.bat $$shell_path($$PWD) $$shell_path($$EXEDIR) $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD"
@@ -112,7 +112,7 @@ linux {
     LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lutil
     LIBS += -L$$PWD/Crashpad/Libraries/Linux/ -lbase
 
-    # Copy crashpad_handler to build directory and run dump_syms and symupload
+    # Copy crashpad_handler, attachment.txt to build directory, and upload symbols
     QMAKE_POST_LINK += "mkdir -p $$OUT_PWD/crashpad && cp $$PWD/Crashpad/Bin/Linux/crashpad_handler $$OUT_PWD/crashpad/crashpad_handler"
     QMAKE_POST_LINK += "&& $$PWD/Crashpad/Tools/Linux/symbols.sh $$PWD $$OUT_PWD $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD"
     QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/attachment.txt $$OUT_PWD/attachment.txt"
