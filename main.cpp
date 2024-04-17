@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 {
     QString dbName = "Fred";
     QString appName = "myQtCrasher";
-    QString appVersion = "1.0";
+    QString appVersion = "1.1";
 
     initializeCrashpad(dbName, appName, appVersion);
 

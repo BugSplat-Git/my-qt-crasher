@@ -78,3 +78,6 @@ Thumbs.db
 
 # MacOS
 .DS_Store
+
+# Qt
+build

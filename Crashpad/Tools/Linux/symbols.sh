@@ -1,10 +1,11 @@
 #!/bin/bash
-dump_syms="${1}/Crashpad/Tools/Linux/dump_syms"
-symupload="${1}/Crashpad/Tools/Linux/sym_upload"
-app="${2}/${4}.debug"
-sym="${4}.sym"
-url="https://${3}.bugsplat.com/post/bp/symbol/breakpadsymbols.php?appName=${4}&appVer=${5}"
+symbol_upload="${1}/Crashpad/Tools/Linux/symbol-upload-linux"
+database="${3}"
+app="${4}"
+version="${5}"
+dir="${2}"
+file="${4}.debug"
+user="${6}"
+password="${7}"
 
-eval "${dump_syms} ${app} > ${sym}"
-sed -i "1s/.debug//" $sym
-eval $"${symupload} \"${sym}\" \"${url}\""
+eval "${symbol_upload} -b ${database} -a \"${app}\" -v \"${version}\" -d \"${dir}\" -f \"${file}\" -u \"${user}\" -p \"${password}\" -m"
