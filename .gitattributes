@@ -1,0 +1,2 @@
+Crashpad/Tools/Linux/symbol-upload-linux filter=lfs diff=lfs merge=lfs -text
+Crashpad/Tools/MacOS/symbol-upload-macos filter=lfs diff=lfs merge=lfs -text
