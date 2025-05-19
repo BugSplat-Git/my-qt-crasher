@@ -114,6 +114,6 @@ linux {
 
     # Copy crashpad_handler, attachment.txt to build directory, and upload symbols
     QMAKE_POST_LINK += "mkdir -p $$OUT_PWD/crashpad && cp $$PWD/Crashpad/Bin/Linux/crashpad_handler $$OUT_PWD/crashpad/crashpad_handler"
-    QMAKE_POST_LINK += "&& $$PWD/Crashpad/Tools/Linux/symbols.sh $$PWD $$OUT_PWD $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD"
+    QMAKE_POST_LINK += "&& cd $$PWD/Crashpad/Tools/Linux && ./symbols.sh $$PWD $$OUT_PWD $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD"
     QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/attachment.txt $$OUT_PWD/attachment.txt"
 }
