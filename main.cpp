@@ -1,17 +1,17 @@
 #include "mainwindow.h"
 
 #if defined(Q_OS_WIN)
-    #define NOMINMAX
-    #include <windows.h>
+#define NOMINMAX
+#include <windows.h>
 #endif
 
 #if defined(Q_OS_MAC)
-    #include <mach-o/dyld.h>
+#include <mach-o/dyld.h>
 #endif
 
 #if defined(Q_OS_LINUX)
-    #include <unistd.h>
-    #define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#include <unistd.h>
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
 #endif
 
 #include <QApplication>
@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 {
     QString dbName = "Fred";
     QString appName = "myQtCrasher";
-    QString appVersion = "1.1";
+    QString appVersion = "1.2";
 
     initializeCrashpad(dbName, appName, appVersion);
 
@@ -69,7 +69,8 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
     annotations["version"] = appVersion.toStdString();  // Required: BugSplat appVersion
     annotations["key"] = "Sample key";                  // Optional: BugSplat key field
     annotations["user"] = "fred@bugsplat.com";          // Optional: BugSplat user email
-    annotations["list_annotations"] = "Sample comment";	// Optional: BugSplat crash description
+    annotations["list_annotations"] = "Sample comment"; // Optional: BugSplat crash description
+    annotations["attribute"] = "test attribute";        // Optional: BugSplat attribute
 
     // Disable crashpad rate limiting so that all crashes have dmp files
     std::vector<std::string> arguments;
@@ -77,11 +78,13 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
 
     // Initialize crashpad database
     std::unique_ptr<CrashReportDatabase> database = CrashReportDatabase::Initialize(reportsDir);
-    if (database == NULL) return false;
+    if (database == NULL)
+        return false;
 
     // Enable automated crash uploads
     Settings *settings = database->GetSettings();
-    if (settings == NULL) return false;
+    if (settings == NULL)
+        return false;
     settings->SetUploadsEnabled(true);
 
     // Attachments to be uploaded alongside the crash - default bundle size limit is 20MB
@@ -95,19 +98,21 @@ bool initializeCrashpad(QString dbName, QString appName, QString appVersion)
     return status;
 }
 
-QString getExecutableDir() {
+QString getExecutableDir()
+{
 #if defined(Q_OS_MAC)
     unsigned int bufferSize = 512;
     std::vector<char> buffer(bufferSize + 1);
 
-    if(_NSGetExecutablePath(&buffer[0], &bufferSize))
+    if (_NSGetExecutablePath(&buffer[0], &bufferSize))
     {
         buffer.resize(bufferSize);
         _NSGetExecutablePath(&buffer[0], &bufferSize);
     }
 
-    char* lastForwardSlash = strrchr(&buffer[0], '/');
-    if (lastForwardSlash == NULL) return NULL;
+    char *lastForwardSlash = strrchr(&buffer[0], '/');
+    if (lastForwardSlash == NULL)
+        return NULL;
     *lastForwardSlash = 0;
 
     return &buffer[0];
@@ -115,10 +120,12 @@ QString getExecutableDir() {
     HMODULE hModule = GetModuleHandleW(NULL);
     WCHAR path[MAX_PATH];
     DWORD retVal = GetModuleFileNameW(hModule, path, MAX_PATH);
-    if (retVal == 0) return NULL;
+    if (retVal == 0)
+        return NULL;
 
     wchar_t *lastBackslash = wcsrchr(path, '\\');
-    if (lastBackslash == NULL) return NULL;
+    if (lastBackslash == NULL)
+        return NULL;
     *lastBackslash = 0;
 
     return QString::fromWCharArray(path);
@@ -126,16 +133,18 @@ QString getExecutableDir() {
     char pBuf[FILENAME_MAX];
     int len = sizeof(pBuf);
     int bytes = MIN(readlink("/proc/self/exe", pBuf, len), len - 1);
-    if (bytes >= 0) {
+    if (bytes >= 0)
+    {
         pBuf[bytes] = '\0';
     }
 
-    char* lastForwardSlash = strrchr(&pBuf[0], '/');
-    if (lastForwardSlash == NULL) return NULL;
+    char *lastForwardSlash = strrchr(&pBuf[0], '/');
+    if (lastForwardSlash == NULL)
+        return NULL;
     *lastForwardSlash = '\0';
 
     return QString::fromStdString(pBuf);
 #else
-    #error getExecutableDir not implemented on this platform
+#error getExecutableDir not implemented on this platform
 #endif
 }
