@@ -46,7 +46,7 @@ BugSplat has created a [Crashpad fork](https://github.com/BugSplat-Git/crashpad)
 
 ### Additional Considerations
 
-If you change the BugSplat `database`, `application`, or `version` values in `main.cpp`, be sure to update the corresponding variables in the [myQtCrasher.pro file](https://github.com/BugSplat-Git/my-qt-crasher/blob/fc55bad38929f21a431c965abcfd3a17b1b91e45/myQtCrasher.pro#L38-L43). The `symbols.sh` scripts are responsible for running `symbol-upload` on macOS and Linux. Likewise, `symbols.bat` is responsible for running `symbol-upload` on Windows. If the values passed to `symbols.sh` or `symbols.bat` via the `QMAKE_POST_LINK` command are wrong then you will not see file names or line numbers in your crash reports.
+If you change the BugSplat `database`, `application`, or `version` values in `main.cpp`, be sure to update the corresponding variables in the [myQtCrasher.pro file](https://github.com/BugSplat-Git/my-qt-crasher/blob/fc55bad38929f21a431c965abcfd3a17b1b91e45/myQtCrasher.pro#L38-L43). The `symbols.sh` scripts are responsible for running `symbol-upload` on macOS and Linux. Likewise, `symbols.ps1` is responsible for running `symbol-upload` on Windows. If the values passed to `symbols.sh` or `symbols.ps1` via the `QMAKE_POST_LINK` command are wrong then you will not see file names or line numbers in your crash reports.
 
 ## 👷 Support
 

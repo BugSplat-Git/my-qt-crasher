@@ -81,3 +81,9 @@ Thumbs.db
 
 # Qt
 build
+
+# Symbol Uploaders
+Crashpad/Tools/MacOS/symbol-upload-macos
+Crashpad/Tools/MacOS/symbol-upload-macos-intel
+Crashpad/Tools/Linux/symbol-upload-linux
+Crashpad/Tools/Windows/symbol-upload-windows.exe

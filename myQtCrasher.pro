@@ -38,7 +38,7 @@ RESOURCES += \
 # BugSplat configuration options
 BUGSPLAT_DATABASE = fred
 BUGSPLAT_APPLICATION = myQtCrasher
-BUGSPLAT_VERSION = 1.1
+BUGSPLAT_VERSION = 1.2
 BUGSPLAT_USER = fred@bugsplat.com
 BUGSPLAT_PASSWORD = Flintstone
 
@@ -72,7 +72,7 @@ macx {
     # Copy crashpad_handler, attachment.txt to build directory, and upload symbols
     QMAKE_POST_LINK += "mkdir -p $$OUT_PWD/crashpad"
     QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/Bin/MacOS/$$ARCH/crashpad_handler $$OUT_PWD/crashpad"
-    QMAKE_POST_LINK += "&& bash $$PWD/Crashpad/Tools/MacOS/symbols.sh $$PWD $$OUT_PWD $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD"
+    QMAKE_POST_LINK += "&& bash $$PWD/Crashpad/Tools/MacOS/symbols.sh $$PWD $$OUT_PWD $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD $$ARCH"
     QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/attachment.txt $$OUT_PWD/attachment.txt"
 }
 
@@ -100,7 +100,7 @@ win32 {
     # Copy crashpad_handler, attachment.txt to build directory, and upload symbols
     QMAKE_POST_LINK += "mkdir $$shell_path($$OUT_PWD)\crashpad"
     QMAKE_POST_LINK += "& copy /y $$shell_path($$PWD)\Crashpad\Bin\Windows\crashpad_handler.exe $$shell_path($$OUT_PWD)\crashpad\crashpad_handler.exe"
-    QMAKE_POST_LINK += "&& $$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.bat $$shell_path($$PWD) $$shell_path($$EXEDIR) $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD"
+    QMAKE_POST_LINK += "&& powershell -ExecutionPolicy Bypass -NoProfile -Command \"& {& '$$shell_path($$PWD)\Crashpad\Tools\Windows\symbols.ps1' -rootPath '$$shell_path($$PWD)' -symbolsDir '$$shell_path($$EXEDIR)' -database '$$BUGSPLAT_DATABASE' -appName '$$BUGSPLAT_APPLICATION' -version '$$BUGSPLAT_VERSION' -username '$$BUGSPLAT_USER' -password '$$BUGSPLAT_PASSWORD'}\""
     QMAKE_POST_LINK += "&& copy /y $$shell_path($$PWD)\Crashpad\attachment.txt $$shell_path($$OUT_PWD)\attachment.txt"
 }
 
@@ -114,6 +114,6 @@ linux {
 
     # Copy crashpad_handler, attachment.txt to build directory, and upload symbols
     QMAKE_POST_LINK += "mkdir -p $$OUT_PWD/crashpad && cp $$PWD/Crashpad/Bin/Linux/crashpad_handler $$OUT_PWD/crashpad/crashpad_handler"
-    QMAKE_POST_LINK += "&& $$PWD/Crashpad/Tools/Linux/symbols.sh $$PWD $$OUT_PWD $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD"
+    QMAKE_POST_LINK += "&& cd $$PWD/Crashpad/Tools/Linux && ./symbols.sh $$PWD $$OUT_PWD $$BUGSPLAT_DATABASE $$BUGSPLAT_APPLICATION $$BUGSPLAT_VERSION $$BUGSPLAT_USER $$BUGSPLAT_PASSWORD"
     QMAKE_POST_LINK += "&& cp $$PWD/Crashpad/attachment.txt $$OUT_PWD/attachment.txt"
 }
